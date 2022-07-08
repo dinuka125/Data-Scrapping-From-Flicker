@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Flickr Data</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="/assets/dcode.css" />
+    <link rel="shorcut icon" href="/assets/favicon.ico" type="image/x-icon" />
+
+    <style>
+      .image-preview {
+        width: 300px;
+        min-height: 100px;
+        border: 5px solid #ddd;
+        margin-top: 15px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #ccc;
+      }
+
+      .image-preview img {
+        display: none;
+        width: 50%;
+      }
+      style > .image-preview2 {
+        width: 300px;
+        min-height: 100px;
+        border: 5px solid #ddd;
+        margin-top: 15px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #ccc;
+      }
+
+      .image-preview2 img {
+        display: none;
+        width: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="jumbotron text-center">
+      <h1>Flickr Data Extractor</h1>
+    </div>
+
+    <form
+      method="POST"
+      action="{{url_for('scrap')}}"
+      enctype="multipart/form-data"
+    >
+      <div class="container-lg">
+        <h3>Search...</h3>
+        <p>
+          <input type="text" name="search_keyword" class="form-control"  placeholder="Search term to extract data" />
+        </p>
+      </div>
+      <div class="container-lg">
+        <p><input type="submit" value="Extract Data and Download as a CSV file" class="btn btn-success" /></p>
+      </div>
+      
+
+    </form>
+    
+  </body>
+</html>
