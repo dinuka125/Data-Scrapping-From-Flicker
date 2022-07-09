@@ -130,17 +130,17 @@ def get_geo_info(search_keyword, df_pic):
    
 
 
-def merge(search_keyword):
-    full_dir = out_dir + '/' + search_keyword
-    df_pic = pd.read_csv("static"+"/"+search_keyword+'_id.csv',sep=',')
-    df_exif = pd.read_csv("static"+"/"+search_keyword+'_camera.csv',sep=',')
-    df_geo = pd.read_csv("static"+"/"+search_keyword+'_geo.csv',sep=',')
+# def merge(search_keyword):
+#     full_dir = out_dir + '/' + search_keyword
+#     df_pic = pd.read_csv("static"+"/"+search_keyword+'_id.csv',sep=',')
+#     df_exif = pd.read_csv("static"+"/"+search_keyword+'_camera.csv',sep=',')
+#     df_geo = pd.read_csv("static"+"/"+search_keyword+'_geo.csv',sep=',')
 
-    df_merge = pd.merge(df_pic, df_exif, on=['pic_id','pic_id'])
-    df_merge = pd.merge(df_merge, df_geo, on=['pic_id','pic_id'])
-    df_merge.to_csv(full_dir+"_Merged.csv", sep=',', index=None)
+#     df_merge = pd.merge(df_pic, df_exif, on=['pic_id','pic_id'])
+#     df_merge = pd.merge(df_merge, df_geo, on=['pic_id','pic_id'])
+#     df_merge.to_csv(full_dir+"_Merged.csv", sep=',', index=None)
 
-    return df_merge
+#     return df_merge
   
     
    
