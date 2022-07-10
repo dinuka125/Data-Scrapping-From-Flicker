@@ -3,7 +3,7 @@ import pandas as pd
 from flask import Flask, render_template, request, send_file
 from app import get_pic, get_geo_info, get_camera_info,  out_dir
 from merge import merger
-
+from shutil import rmtree
 
 
 
@@ -19,8 +19,17 @@ def index():
 def scrap():
     try:
         if request.method == 'POST':
-            for i in os.listdir(out_dir):
-                os.remove(out_dir+'/'+i)
+
+            dirpath = "./static"
+            for filename in os.listdir(dirpath):
+                filepath = os.path.join(dirpath, filename)
+                try:
+                    rmtree(filepath)
+                    print("gabage removing")
+                except OSError:
+                    os.remove(filepath)
+                    print("gabage removing")
+
             try:
                 search_keyword = request.form['search_keyword']
                 get_pic(search_keyword)

@@ -6,7 +6,7 @@ import pandas as pd
 api_key ="35883a31753987d251ef52f0cc2dcb79"
 api_secret = "29eebe28b4a9a808"
 min_date = '2018-01-01'
-out_dir = "./static"
+out_dir = "static"
 
 flickr = flickrapi.FlickrAPI(api_key, api_secret, format='etree')
 
@@ -45,7 +45,7 @@ def get_pic(tag):
         total += 1
     
 
-        if amount >= 20:
+        if amount >= 100:
             break
         else:
             pass
@@ -61,10 +61,12 @@ def get_camera_info(search_keyword, df_pic):
     full_name = out_dir + '/' + file_name
     df_info.to_csv(full_name, sep=",", index=None)                          
 
-    for i in range(8):
+    df_pic_list = df_pic['pic_id'].tolist()
+    for i in range(len(df_pic_list)):
         try:
             flickr = flickrapi.FlickrAPI(api_key, api_secret, format='parsed-json')
-            exif = flickr.photos.getExif(photo_id=df_pic['pic_id'].iloc[i])
+            # exif = flickr.photos.getExif(photo_id=df_pic['pic_id'].iloc[i])
+            exif = flickr.photos.getExif(photo_id=df_pic_list[i])
             info_get = exif['photo']['exif']
             for info in info_get:
                 if info['label'] == 'Make':
@@ -91,8 +93,8 @@ def get_camera_info(search_keyword, df_pic):
             df_info['pic_id'] = df_pic['pic_id'].iloc[i]
             df_info.to_csv(full_name,sep=',',index=None,header=None,mode='a')          
 
-        except:
-            print("API limit reached")              
+        except Exception as e:
+            print("API limit reached at Camera Info :: ",e)             
                 
 
 def get_geo_info(search_keyword, df_pic):
@@ -101,11 +103,12 @@ def get_geo_info(search_keyword, df_pic):
     df_info = pd.DataFrame(columns=['pic_id','latitude','longitude','county','region','country'])
     df_info.to_csv(full_name, sep=",", index=None)
 
-    for i in range(8):
+    df_pic_list = df_pic['pic_id'].tolist()
+    for i in range(len(df_pic_list)):
         flickr=flickrapi.FlickrAPI(api_key,api_secret,format='parsed-json')
         try:
             
-            pic_geo = flickr.photos.geo.getLocation(photo_id=df_pic['pic_id'].iloc[i])
+            pic_geo = flickr.photos.geo.getLocation(photo_id=str(df_pic_list[i]))
             geo = pic_geo['photo']['location']
 
             for loc in geo:
@@ -123,8 +126,8 @@ def get_geo_info(search_keyword, df_pic):
 
             df_info.to_csv(full_name,sep=',',index=False,header=None,mode='a')     
 
-        except:
-            print("No geo info for this pic")
+        except Exception as e:
+            print("No geo info for this pic at geo :: ",e)
             pass  
 
    
