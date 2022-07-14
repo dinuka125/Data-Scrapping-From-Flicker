@@ -2,6 +2,8 @@ from multiprocessing.connection import wait
 import flickrapi
 from matplotlib.pyplot import get
 import pandas as pd
+from datetime import date
+
 
 api_key ="35883a31753987d251ef52f0cc2dcb79"
 api_secret = "29eebe28b4a9a808"
@@ -10,19 +12,39 @@ out_dir = "static"
 
 flickr = flickrapi.FlickrAPI(api_key, api_secret, format='etree')
 
+def date_checker1(min_date, max_date):
+    today = date.today()
+    if min_date and max_date <= str(today):
+        return True
+    else:
+        False    
 
+       
 
-def get_pic(tag):
+def date_checker(min_date, max_date):
+    if min_date < max_date :
+        return True
+    else:
+        return False    
+
+def get_pic(tag,min_date,max_date):
     flickr=flickrapi.FlickrAPI(api_key,api_secret,cache=True, format='etree')
     
+    print(min_date)
+    print(max_date)
+
     try:
-        photos=flickr.walk(tags=tag,sort='interestingness-desc',content_type='1',extras='url_c')
+        if min_date == "":
+            min_date = '2018-01-01'
+        if max_date == "":
+            max_date = '2018-01-02'  
+        photos=flickr.walk(tags=tag,extras='url_c,date_taken,owner_name',sort='interestingness-desc',content_type='1',min_upload_date =min_date ,max_upload_date =max_date)
     except Exception as e:
-        print('get_pic()',e)
+        print(e)
     
     file_name = tag + '_id.csv'
     full_name = out_dir + '/' + file_name
-    df_pic = pd.DataFrame(columns=['pic_id','Views','tag'])
+    df_pic = pd.DataFrame(columns=['pic_id','url','tag','date_taken','Owner_name'])
     df_pic.to_csv(full_name,sep=',',index=None)
     total = 0
     amount = 0
@@ -30,25 +52,36 @@ def get_pic(tag):
     
     for photo in photos:
             
-        exist = (float(str(photo.get('views').strip()))!= 0)
+        exist = photo.get('url_c')!= 0
         if exist:
             df_pic['pic_id'] = pd.Series(str(photo.get('id')))
-            df_pic['Views'] = pd.Series(float(str(photo.get('views').strip())))
+            url = photo.get('url_c')
+            if url != None:
+                df_pic['url'] = pd.Series(photo.get('url_c'))
+            else:
+                df_pic['url'] = pd.Series('No_url')   
+
+
+            # value = pd.Series(photo.get('url_c'))
+            # if value != "":
+            #     df_pic['url'] = value
+            # else:
+            #     df_pic['url'] = pd.Series("no_info")
+            
             amount += 1
         else:
             drop_nan += 1
         
         df_pic['tag'] = tag
+        df_pic['date_taken'] = pd.Series(photo.get('datetaken'))
+        df_pic['Owner_name'] = pd.Series(photo.get('ownername'))      
         df_pic.to_csv(full_name,sep=',',index=False,header=None,mode='a')
         df_pic = pd.DataFrame()
         
         total += 1
     
 
-        if amount >= 100:
-            break
-        else:
-            pass
+       
     return
 
 
@@ -89,6 +122,8 @@ def get_camera_info(search_keyword, df_pic):
                     df_info['Color_Space'] = pd.Series(info['raw']['_content'])
                 elif info['label'] == 'Lens Model':
                     df_info['Lens_Model'] = pd.Series(info['raw']['_content'])
+                elif info['label'] == "" :
+                       df_info['Lens_Model'] = pd.Series("No_info")
                 
             df_info['pic_id'] = df_pic['pic_id'].iloc[i]
             df_info.to_csv(full_name,sep=',',index=None,header=None,mode='a')          
